@@ -1,5 +1,19 @@
 # Copyright shawnzhang31. All Rights Reserved
+import torch
 import torch.nn  as nn
+
+def weights_init(m:nn.Module):
+    """
+    调用DCGAN模型的时候的权重初始化
+    @params:
+        m       - Required : DCGAN的Generator或者Discriminator
+    """
+    classname = m.__class__.__name__
+    if classname.find('Conv') != -1:
+        nn.init.normal_(m.weight.data, 0.0, 0.02)
+    elif classname.find('BatchNorm') != -1:
+        nn.init.normal_(m.weight.data, 1.0, 0.02)
+        nn.init.constant_(m.bias.data, 0)
 
 # Generator Code
 class Generator(nn.Module):
@@ -83,3 +97,20 @@ class Discriminator(nn.Module):
 
     def forward(self, input):
         return self.main(input)
+
+# ngpu = 0
+# device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
+
+# netG = Generator(ngpu=ngpu).to(device)
+
+# if (device.type == 'cuda') and (ngpu > 0):
+#     netG = nn.DataParallel(netG, list(range(ngpu)))
+
+# print(netG)
+
+# netD = Discriminator(ngpu=ngpu).to(device)
+
+# if (device.type == 'cuda') and (ngpu > 0):
+#     netD = nn.DataParallel(netD, list(range(ngpu)))
+
+# print(netD)
